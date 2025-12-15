@@ -17,6 +17,16 @@ packages:
   - ufw
 package_update: true
 package_upgrade: true
+write_files:
+- content: |
+    ---
+    version: 0.1.0
+    addons:
+      - name: dns
+      - name: cert-manager
+      - name: ingress
+      - name: hostpath-storage
+  path: /var/snap/microk8s/common/.microk8s.yaml
 snap:
   commands:
     - snap install microk8s --classic
@@ -39,12 +49,5 @@ runcmd:
   - sed -i -e '/^\(#\|\)AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
   - sed -i '$a AllowUsers godsmith' /etc/ssh/sshd_config
   - usermod -a -G microk8s godsmith
-  - microk8s enable cert-manager
-  - microk8s enable cis-hardening
-  - microk8s enable community
-  - microk8s enable ingress
-  - microk8s enable minio
-  - microk8s enable cloudnative-pg
-  - microk8s enable openebs
   - systemctl restart ssh
   - reboot
